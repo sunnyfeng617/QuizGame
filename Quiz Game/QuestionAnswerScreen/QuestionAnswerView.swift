@@ -40,9 +40,10 @@ struct QuestionAnswerView: View {
             Spacer()
             continueButton
         }
+        .padding(16)
         .onAppear {
             viewModel.load()
-        }.padding(16)
+        }
     }
 
     @ViewBuilder
@@ -59,9 +60,11 @@ struct QuestionAnswerView: View {
         ForEach(answers, id:\.self) { answer in
             AnswerCell(text: answer, isAnswered: isAnswered, isCorrect: answer == correctAnswer, isSelected: answer == selectedAnswer)
                 .onTapGesture {
-                    if answer == correctAnswer && isAnswered == false { points += 1 }
-                    selectedAnswer = answer
-                    isAnswered = true
+                    if answer == correctAnswer && !isAnswered { points += 1 }
+                    if !isAnswered {
+                        selectedAnswer = answer
+                        isAnswered = true
+                    }
                 }
         }
     }
