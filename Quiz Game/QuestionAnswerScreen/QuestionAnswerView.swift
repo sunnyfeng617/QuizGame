@@ -52,7 +52,7 @@ struct QuestionAnswerView: View {
             difficultyPoints(difficulty: questionAnswer.difficulty, points: points)
             Text(String(htmlEncodedString: questionAnswer.question) ?? questionAnswer.question)
             answerSection(answers: questionAnswer.allAnswers, correctAnswer: questionAnswer.correctAnswer)
-        } else {
+        } else if viewModel.questions.count != 0 {
             displayPoints(points: points)
         }
     }
