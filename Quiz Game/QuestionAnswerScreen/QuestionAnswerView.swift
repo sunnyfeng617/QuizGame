@@ -35,7 +35,6 @@ struct QuestionAnswerView: View {
 
     var body: some View {
         VStack {
-            points(points: points)
             questionAnswerSection()
             Spacer()
             continueButton
@@ -50,8 +49,11 @@ struct QuestionAnswerView: View {
     private func questionAnswerSection() -> some View {
         if index < viewModel.questions.count {
             let questionAnswer = viewModel.questions[index]
+            difficultyPoints(difficulty: questionAnswer.difficulty, points: points)
             Text(String(htmlEncodedString: questionAnswer.question) ?? questionAnswer.question)
             answerSection(answers: questionAnswer.allAnswers, correctAnswer: questionAnswer.correctAnswer)
+        } else {
+            displayPoints(points: points)
         }
     }
 
@@ -68,14 +70,26 @@ struct QuestionAnswerView: View {
                 }
         }
     }
-
+    
     @ViewBuilder
-    private func points(points: Int) -> some View {
-        HStack {
-            Spacer()
-            Text("Points \(points)")
+    private func difficultyPoints(difficulty: QuestionAnswer.Difficulty, points: Int) -> some View {
+            HStack {
+                Text(difficulty.rawValue.capitalized)
+                Spacer()
+                Text("Points \(points)")
+            }
+            .padding(.bottom, 15)
+    }
+    
+    @ViewBuilder
+    private func displayPoints(points: Int) -> some View {
+        Spacer()
+        if points == 1 {
+            Text("You scored \(points) point!")
+        } else {
+            Text("You scored \(points) points!")
         }
-        .padding(.bottom, 15)
+        Spacer()
     }
 
     var continueButton: some View {
