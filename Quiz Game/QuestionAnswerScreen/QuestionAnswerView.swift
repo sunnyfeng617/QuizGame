@@ -3,10 +3,15 @@ import SwiftUI
 
 class QuestionAnswerViewModel: ObservableObject {
 
+    let category: QuestionAnswer.Category
     @Published var questions: [QuestionAnswer] = []
 
+    init(category: QuestionAnswer.Category) {
+        self.category = category
+    }
+
     func fetchQuestions() async throws -> [QuestionAnswer] {
-        guard let url = URL(string: "https://opentdb.com/api.php?amount=10") else {
+        guard let url = URL(string: "https://opentdb.com/api.php?amount=10&category=\(category.categoryNumber())") else {
             throw URLError.urlError
         }
 
@@ -73,12 +78,12 @@ struct QuestionAnswerView: View {
     
     @ViewBuilder
     private func difficultyPoints(difficulty: QuestionAnswer.Difficulty, points: Int) -> some View {
-            HStack {
-                Text(difficulty.rawValue.capitalized)
-                Spacer()
-                Text("Points \(points)")
-            }
-            .padding(.bottom, 15)
+        HStack {
+            Text(difficulty.rawValue.capitalized)
+            Spacer()
+            Text("Points \(points)")
+        }
+        .padding(.bottom, 15)
     }
     
     @ViewBuilder
@@ -104,7 +109,7 @@ struct QuestionAnswerView: View {
 
 struct QuestionAnswerView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = QuestionAnswerViewModel()
+        let viewModel = QuestionAnswerViewModel(category: .film)
         QuestionAnswerView(viewModel: viewModel)
     }
 }

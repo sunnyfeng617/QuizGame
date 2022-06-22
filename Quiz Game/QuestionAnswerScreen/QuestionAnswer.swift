@@ -21,7 +21,11 @@ struct QuestionAnswer: Codable {
         case hard
     }
 
-    enum Category: String, Codable {
+    enum Category: String, Codable, CaseIterable, Comparable {
+        static func < (lhs: QuestionAnswer.Category, rhs: QuestionAnswer.Category) -> Bool {
+            return String(describing: lhs.rawValue) < String(describing: rhs.rawValue)
+        }
+
         case general = "General Knowledge"
         case books = "Entertainment: Books"
         case film = "Entertainment: Film"
@@ -46,6 +50,35 @@ struct QuestionAnswer: Codable {
         case gadgets = "Science: Gadgets"
         case anime = "Entertainment: Japanese Anime & Manga"
         case cartoons = "Entertainment: Cartoon & Animations"
+
+        func categoryNumber() -> Int {
+            switch self {
+            case .general: return 9
+            case .books: return 10
+            case .film: return 11
+            case .music: return 12
+            case .theatre: return 13
+            case .tv: return 14
+            case .videoGames: return 15
+            case .boardGames: return 16
+            case .scienceNature: return 17
+            case .computers: return 18
+            case .maths: return 19
+            case .mythology: return 20
+            case .sports: return 21
+            case .geography: return 22
+            case .history: return 23
+            case .politics: return 24
+            case .art: return 25
+            case .celebrities: return 26
+            case .animals: return 27
+            case .vehicles: return 28
+            case .comics: return 29
+            case .gadgets: return 30
+            case .anime: return 31
+            case .cartoons: return 32
+            }
+        }
     }
 
     enum CodingKeys: String, CodingKey {
