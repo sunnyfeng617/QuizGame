@@ -52,6 +52,8 @@ struct QuestionAnswerView: View {
             difficultyPoints(difficulty: questionAnswer.difficulty, points: points)
             Text(String(htmlEncodedString: questionAnswer.question) ?? questionAnswer.question)
             answerSection(answers: questionAnswer.allAnswers, correctAnswer: questionAnswer.correctAnswer)
+        } else {
+            displayPoints(points: points)
         }
     }
 
@@ -77,6 +79,17 @@ struct QuestionAnswerView: View {
                 Text("Points \(points)")
             }
             .padding(.bottom, 15)
+    }
+    
+    @ViewBuilder
+    private func displayPoints(points: Int) -> some View {
+        Spacer()
+        if points == 1 {
+            Text("You scored \(points) point!")
+        } else {
+            Text("You scored \(points) points!")
+        }
+        Spacer()
     }
 
     var continueButton: some View {
