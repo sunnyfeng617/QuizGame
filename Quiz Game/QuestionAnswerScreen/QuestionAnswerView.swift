@@ -4,6 +4,7 @@ import SwiftUI
 class QuestionAnswerViewModel: ObservableObject {
 
     @Published var questions: [QuestionAnswer] = []
+    @Published var loading: Bool = false
 
     func fetchQuestions() async throws -> [QuestionAnswer] {
         guard let url = URL(string: "https://opentdb.com/api.php?amount=10") else {
@@ -17,11 +18,13 @@ class QuestionAnswerViewModel: ObservableObject {
 
     func load() {
         Task { @MainActor in
+            loading = true
             do {
                 questions = try await fetchQuestions()
             } catch {
 
             }
+            loading = false
         }
     }
 }
@@ -44,10 +47,22 @@ struct QuestionAnswerView: View {
             viewModel.load()
         }
     }
+    
+    private func reset() {
+        index = 0
+        isAnswered = false
+        selectedAnswer = nil
+        points = 0
+    }
 
     @ViewBuilder
     private func questionAnswerSection() -> some View {
-        if index < viewModel.questions.count {
+        if viewModel.loading {
+            Spacer()
+            Text("Loading...")
+            Spacer()
+        }
+        else if index < viewModel.questions.count {
             let questionAnswer = viewModel.questions[index]
             difficultyPoints(difficulty: questionAnswer.difficulty, points: points)
             Text(String(htmlEncodedString: questionAnswer.question) ?? questionAnswer.question)
@@ -93,12 +108,21 @@ struct QuestionAnswerView: View {
     }
 
     var continueButton: some View {
-        Button(action: {
-            index += 1
-            isAnswered = false
-        }) {
-            isAnswered ? Text("Continue") : Text("Skip")
-        }.padding()
+        if index < viewModel.questions.count {
+            return Button(action: {
+                index += 1
+                isAnswered = false
+            }) {
+                isAnswered ? Text("Continue") : Text("Skip")
+            }.padding()
+        } else {
+            return Button(action: {
+               reset()
+                viewModel.load()
+           }) {
+               Text("Restart")
+           }.padding()
+        }
     }
 }
 
